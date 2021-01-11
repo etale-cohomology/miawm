@@ -1,35 +1,35 @@
 --------------------------------------------------------------------------------------------------------------------------------
 # miawm
 
-`miawm` (mathIsART window manager) is a *minimalistic* window manager for the **X Window System** (aka. **X11**).
+`miawm` (mathIsART window manager) is a *minimalistic* window manager for the **X Window System** (aka. **X11**).  
 
-`miawm` subscribes to the Unix philosophy (do one thing, and do it well), and considers that a window manager must do **exactly 2 things**:
-  0) manage windows (move, resize, hide)
-  1) implement universal shortcuts (mostly for launching/closing applications, and changing the window focus)
+`miawm` subscribes to the Unix philosophy (do one thing, and do it well), and considers that a window manager must do **exactly 2 things**:  
+  0) manage windows (move, resize, hide)  
+  1) implement universal shortcuts (mostly for launching/closing applications, and changing the window focus)  
 
-In particular, a window manager must **not** do the following things:
-  0) draw window frames
-  1) draw window decorations/buttons/titlebars/menus
-  2) draw application menus (an exception is universal system menu when you right-click the root window)
-  3) have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but an abomination)
-  4) have anything to do whatsoever with drawing UI elements
-  5) reparent top-level windows (aka. substructure redirect)
+In particular, a window manager must **not** do the following things:  
+  0) draw window frames  
+  1) draw window decorations/buttons/titlebars/menus  
+  2) draw application menus (an exception is universal system menu when you right-click the root window)  
+  3) have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but an abomination)  
+  4) have anything to do whatsoever with drawing UI elements  
+  5) reparent top-level windows (aka. substructure redirect)  
 
-A good window manager is an invisible window manager.
-A window manager must get out of the way as much as possible.
+A good window manager is an invisible window manager.  
+A window manager must get out of the way as much as possible.  
 
-The result of this is that window manager are naturally very simple applications, and require very little code.
-The logic for a window manager is very linear and the responsibilities few, and so its code must be very linear (and small) as well.
+The result of this is that window manager are naturally very simple applications, and require very little code.  
+The logic for a window manager is very linear and the responsibilities few, and so its code must be very linear (and small) as well.  
 
 # notes
 
-In `xcb` there are 3 kinds of API entry points: `xcb_<op>()`, `xcb_<op>_checked()`, `xcb_<op>_unchecked()`.
-`xcb_<op>()`           API calls return `xcb_void_cookie_t`.
-`xcb_<op>_checked()`   API calls return `xcb_void_cookie_t`.
-`xcb_<op>_unchecked()` API calls return `xcb_<op>_cookie_t`.
-Both `xcb_void_cookie_t` and `xcb_<op>_cookie_t` are a `struct{ unsigned int sequence; };`, so they can be processed by the same error-checking macro.
+In `xcb` there are 3 kinds of API entry points: `xcb_<op>()`, `xcb_<op>_checked()`, `xcb_<op>_unchecked()`.  
+`xcb_<op>()`           API calls return `xcb_void_cookie_t`.  
+`xcb_<op>_checked()`   API calls return `xcb_void_cookie_t`.  
+`xcb_<op>_unchecked()` API calls return `xcb_<op>_cookie_t`.  
+Both `xcb_void_cookie_t` and `xcb_<op>_cookie_t` are a `struct{ unsigned int sequence; };`, so they can be processed by the same error-checking macro.  
 
-Example API entry points.
+Example API entry points.  
 
 ```c
 xcb_void_cookie_t xcb_create_window();
@@ -38,10 +38,11 @@ xcb_void_cookie_t xcb_create_window_checked();
 xcb_get_window_attributes_cookie_t xcb_get_window_attributes();
 xcb_get_window_attributes_cookie_t xcb_get_window_attributes_unchecked();
 ```
-For requests with no reply (eg. `xcb_map_window()`),  errors are delivered to the event loop (you receive an X11 event of type `0x00` when calling `xcb_poll_for_event()`). In order to explicitly check for errors in a **BLOCKING** fashion, call `xcb_<op>_checked()` (eg. `xcb_map_window_checked()`) and use `xcb_request_check()`
-For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when calling the reply function. To get errors in the event loop instead, call `xcb_<op>_unchecked()` (eg. `xcb_intern_atom_unchecked()`)
 
-`wm_focus_next()` focuses the window `W` (in the window stack) satisfying:
+For requests with no reply (eg. `xcb_map_window()`),  errors are delivered to the event loop (you receive an X11 event of type `0x00` when calling `xcb_poll_for_event()`). In order to explicitly check for errors in a **BLOCKING** fashion, call `xcb_<op>_checked()` (eg. `xcb_map_window_checked()`) and use `xcb_request_check()`.  
+For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when calling the reply function. To get errors in the event loop instead, call `xcb_<op>_unchecked()` (eg. `xcb_intern_atom_unchecked()`).  
+
+`@wm_focus_next()` focuses the window `W` (in the window stack) satisfying:
 
     0) idx[W] is not @idx
     1) map_state[W] is @XCB_MAP_STATE_VIEWABLE
@@ -56,7 +57,6 @@ For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when ca
 ```
 libxcb
 libxcb-res
-libxcb-xinput
 ```
 
 # x11 modifiers
@@ -237,10 +237,10 @@ xprop -id 0x00e00006  _NET_WM_PID
 
 # x11 save set
 
-Save sets are a useless feature for bloated window managers.
-Window managers almost always place in the save-set all the windows they reparent or iconify, using XAddToSaveSet().
-Windows are automatically removed from the save-set when they are destroyed.
-If your window manager doesn't not reparent/iconify (which should ALWAYS be the case), then it doesn't need a save set.
+Save sets are a useless feature for bloated window managers.  
+Window managers almost always place in the save-set all the windows they reparent or iconify, using XAddToSaveSet().  
+Windows are automatically removed from the save-set when they are destroyed.  
+If your window manager doesn't not reparent/iconify (which should ALWAYS be the case), then it doesn't need a save set.  
 
 ## xcb api
   xcb.h
@@ -732,17 +732,15 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
 ACTIVE  GRABS (invoked by calling XGrabPointer() or XGrabKeyboard()) causes pointer and keyboard events to be sent to the grabbing window.
 PASSIVE GRABS (invoked by calling XGrabKey()     or XGrabButton())   causes an ACTIVE GRAB to begin when a certain key or button combination is pressed.
 
-PASSIVE GRABS are useful in implementing menus. When you grab a device, you have the option of confining the pointer to any 
-When you grab a device, you have the option of confining the pointer to any window within the grabbing client
-and of controlling the further processing of both keyboard and pointer events.
-Grabbing the keyboard effectively selects all keyboard events, whether you selected them previously or not.
-Grabbing the keyboard also causes FocusIn and FocusOut events to be sent to the old and new focus windows, but they must be selected by each window to be received.
-In the call to grab the pointer, however, you specify what types of pointer, button, and enter/leave events you want.
-Grabs take precedence over the keyboard focus window. Grabs of the keyboard generated FocusIn and FocusOut events,
-so that if your client selects these, it can determine whether or not it can get keyboard events.
-Pointer grabbing is more problematic, since no event notifies other clients when one client has grabbed it. However, pointer grabs are almost always temporary.
+PASSIVE GRABS are useful in implementing menus.
+When you grab a device, you have the option of confining the pointer to any window within the grabbing client and of controlling the further processing of both keyboard and pointer events.  
+Grabbing the keyboard effectively selects all keyboard events, whether you selected them previously or not.  
+Grabbing the keyboard also causes FocusIn and FocusOut events to be sent to the old and new focus windows, but they must be selected by each window to be received.  
+In the call to grab the pointer, however, you specify what types of pointer, button, and enter/leave events you want.  
+Grabs take precedence over the keyboard focus window. Grabs of the keyboard generated FocusIn and FocusOut events, so that if your client selects these, it can determine whether or not it can get keyboard events.  
+Pointer grabbing is more problematic, since no event notifies other clients when one client has grabbed it. However, pointer grabs are almost always temporary.  
 
-xcb_grab_key()
+`@xcb_grab_key()`  
   Passive grab on the keyboard. In the future, the keyboard is actively grabbed (as for GrabKeyboard), the last-keyboard-grab time is set to the time at which the key was pressed (as transmitted in the KeyPress event), and the KeyPress event is reported if all of the following conditions are true:
   The keyboard is not grabbed and the specified key (which can itself be a modifier key) is logically pressed when the specified modifier keys are logically down, and no other modifier keys are logically down.
   Either the grab_window is an ancestor of (or is) the focus window, or the grab_window is a descendant of the focus window and contains the pointer.
@@ -752,10 +750,10 @@ xcb_grab_key()
   A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers). It is not required that all modifiers specified have currently assigned KeyCodes. A keycode argument of AnyKey is equivalent to issuing the request for all possible KeyCodes. Otherwise, the specified keycode must be in the range specified by min_keycode and max_keycode in the connection setup, or a BadValue error results.
   If some other client has issued a XGrabKey with the same key combination on the same window, a BadAccess error results. When using AnyModifier or AnyKey, the request fails completely, and a BadAccess error results (no grabs are established) if there is a conflicting grab for any combination.
 
-  XCB_MOD_MASK_ANY:    Grab the pointer w/ all possible modifier combinations
-  XCB_GRAB_ANY:        Grab any key
-  XCB_GRAB_MODE_SYNC:  The state of the keyboard appears to freeze: No further keyboard events are generated by the server until the grabbing client issues a releasing AllowEvents request or until the keyboard grab is released.
-  XCB_GRAB_MODE_ASYNC: Keyboard event processing continues normally.
+  `XCB_MOD_MASK_ANY`:    Grab the pointer w/ all possible modifier combinations
+  `XCB_GRAB_ANY`:        Grab any key
+  `XCB_GRAB_MODE_SYNC`:  The state of the keyboard appears to freeze: No further keyboard events are generated by the server until the grabbing client issues a releasing AllowEvents request or until the keyboard grab is released.
+  `XCB_GRAB_MODE_ASYNC`: Keyboard event processing continues normally.
 
   edef xcb_mod_mask_t {
     XCB_MOD_MASK_SHIFT   = 1,
