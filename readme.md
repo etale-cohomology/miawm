@@ -5,7 +5,7 @@
 
 `miawm` (mathIsART window manager) is a **minimalistic**, **keyboard-only** window manager for the **X Window System** (aka. **X11**).  
 
-`miawm` subscribes to the Unix philosophy (do one thing, and do it well), and considers that a window manager must do **exactly 2 things**:  
+`miawm` subscribes to the Unix philosophy (*do one thing, and do it well*), and considers that a window manager must do **exactly 2 things**:  
 
   0) manage windows (move, resize, hide)  
   1) implement universal shortcuts (mostly for launching/closing applications, and changing the **window focus**)  
