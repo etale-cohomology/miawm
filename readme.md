@@ -218,103 +218,6 @@ When a client succeeds in performing a SetModifierMapping request, all clients w
 Note that a GrabServer request must be used to make the GetModifierMapping and SetModifierMapping pair in these transactions atomic. 
 
 --------------------------------------------------------------------------------------------------------------------------------
-# application atoms examples
-
-## sublime (leader)
-
-```c
-GDK_TIMESTAMP_PROP(GDK_TIMESTAMP_PROP) = 0x61
-_NET_WM_STATE(ATOM) = _NET_WM_STATE_MAXIMIZED_VERT, _NET_WM_STATE_MAXIMIZED_HORZ
-WM_HINTS(WM_HINTS):
-    Client accepts input or input focus: True
-    Initial state is Normal State.
-    bitmap id # to use for icon: 0x80001e
-    bitmap id # of mask for icon: 0x800021
-    window id # of group leader: 0x800001
-_MOTIF_DRAG_RECEIVER_INFO(_MOTIF_DRAG_RECEIVER_INFO) = 0x6c, 0x0, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x10, 0x0, 0x0, 0x0
-_NET_WM_ICON(CARDINAL) =  Icon (16 x 16):
-_NET_WM_SYNC_REQUEST_COUNTER(CARDINAL) = 8388613
-_NET_WM_WINDOW_TYPE(ATOM) = _NET_WM_WINDOW_TYPE_NORMAL
-_NET_WM_USER_TIME_WINDOW(WINDOW): window id # 0x800004
-WM_CLIENT_LEADER(WINDOW): window id # 0x800001
-_NET_WM_PID(CARDINAL) = 36111
-WM_LOCALE_NAME(STRING) = "en_US.UTF-8"
-WM_CLIENT_MACHINE(STRING) = "dac"
-WM_NORMAL_HINTS(WM_SIZE_HINTS):
-    program specified minimum size: 0 by 0
-    window gravity: NorthWest
-WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, WM_TAKE_FOCUS, _NET_WM_PING, _NET_WM_SYNC_REQUEST
-WM_CLASS(STRING) = "sublime_text", "Sublime_text"
-WM_ICON_NAME(STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
-_NET_WM_ICON_NAME(UTF8_STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
-WM_NAME(STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
-_NET_WM_NAME(UTF8_STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
-```
-
-## waterfox (leader)
-
-```c
-GDK_TIMESTAMP_PROP(GDK_TIMESTAMP_PROP) = 0x61
-WM_HINTS(WM_HINTS):
-    Client accepts input or input focus: True
-    Initial state is Normal State.
-    bitmap id # to use for icon: 0xa00007
-    bitmap id # of mask for icon: 0xa0000e
-    window id # of group leader: 0xa00001
-_GTK_THEME_VARIANT(UTF8_STRING) = 
-WM_WINDOW_ROLE(STRING) = "browser"
-_NET_WM_ICON(CARDINAL) =  Icon (128 x 128):
-_NET_WM_OPAQUE_REGION(CARDINAL) = 
-_NET_WM_WINDOW_TYPE(ATOM) = _NET_WM_WINDOW_TYPE_NORMAL
-_NET_WM_SYNC_REQUEST_COUNTER(CARDINAL) = 10485765, 10485766
-_NET_WM_USER_TIME_WINDOW(WINDOW): window id # 0xa00004
-WM_CLIENT_LEADER(WINDOW): window id # 0xa00001
-_NET_WM_PID(CARDINAL) = 36175
-WM_LOCALE_NAME(STRING) = "en_US.UTF-8"
-WM_CLIENT_MACHINE(STRING) = "dac"
-WM_NORMAL_HINTS(WM_SIZE_HINTS):
-    program specified minimum size: 450 by 95
-    program specified maximum size: 32766 by 32766
-    program specified base size: 450 by 95
-    window gravity: NorthWest
-WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, WM_TAKE_FOCUS, _NET_WM_PING, _NET_WM_SYNC_REQUEST
-WM_CLASS(STRING) = "Navigator", "Waterfox"
-WM_ICON_NAME(STRING) = "report.pdf - Waterfox"
-_NET_WM_ICON_NAME(UTF8_STRING) = "report.pdf - Waterfox"
-WM_NAME(STRING) = "report.pdf - Waterfox"
-_NET_WM_NAME(UTF8_STRING) = "report.pdf - Waterfox"
-```
-
-## root
-
-```c
-GDK_VISUALS(INTEGER) = 40, 295
-RESOURCE_MANAGER(STRING) = "urxvt.font:\t-schumacher-clean-medium-r-normal--6-60-75-75-c-50-iso646.1991-irv\nurxvt.boldFont:\t-schumacher-clean-medium-r-normal--6-60-75-75-c-50-iso646.1991"
-_XKB_RULES_NAMES(STRING) = "evdev", "pc105", "us", "", ""
-XFree86_has_VT(INTEGER) = 1
-XFree86_VT(INTEGER) = 2
-```
-
-## sublime (nonleader)
-
-```c
-WM_CLASS(STRING) = "sublime_text", "Sublime_text"
-WM_COMMAND(STRING) = { "sublime_text" }
-_NET_WM_USER_TIME_WINDOW(WINDOW): window id # 0x800002
-WM_CLIENT_LEADER(WINDOW): window id # 0x800001
-_NET_WM_PID(CARDINAL) = 36111
-WM_LOCALE_NAME(STRING) = "en_US.UTF-8"
-WM_CLIENT_MACHINE(STRING) = "dac"
-WM_NORMAL_HINTS(WM_SIZE_HINTS):
-    program specified size: 10 by 10
-WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, WM_TAKE_FOCUS, _NET_WM_PING
-WM_ICON_NAME(STRING) = "sublime_text"
-_NET_WM_ICON_NAME(UTF8_STRING) = "sublime_text"
-WM_NAME(STRING) = "Sublime Text"
-_NET_WM_NAME(UTF8_STRING) = "Sublime Text"
-```
-
---------------------------------------------------------------------------------------------------------------------------------
 # xcb
 
 ```shell
@@ -843,6 +746,103 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
 ```
 
 --------------------------------------------------------------------------------------------------------------------------------
+# application atoms examples
+
+## sublime (leader)
+
+```c
+GDK_TIMESTAMP_PROP(GDK_TIMESTAMP_PROP) = 0x61
+_NET_WM_STATE(ATOM) = _NET_WM_STATE_MAXIMIZED_VERT, _NET_WM_STATE_MAXIMIZED_HORZ
+WM_HINTS(WM_HINTS):
+    Client accepts input or input focus: True
+    Initial state is Normal State.
+    bitmap id # to use for icon: 0x80001e
+    bitmap id # of mask for icon: 0x800021
+    window id # of group leader: 0x800001
+_MOTIF_DRAG_RECEIVER_INFO(_MOTIF_DRAG_RECEIVER_INFO) = 0x6c, 0x0, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x10, 0x0, 0x0, 0x0
+_NET_WM_ICON(CARDINAL) =  Icon (16 x 16):
+_NET_WM_SYNC_REQUEST_COUNTER(CARDINAL) = 8388613
+_NET_WM_WINDOW_TYPE(ATOM) = _NET_WM_WINDOW_TYPE_NORMAL
+_NET_WM_USER_TIME_WINDOW(WINDOW): window id # 0x800004
+WM_CLIENT_LEADER(WINDOW): window id # 0x800001
+_NET_WM_PID(CARDINAL) = 36111
+WM_LOCALE_NAME(STRING) = "en_US.UTF-8"
+WM_CLIENT_MACHINE(STRING) = "dac"
+WM_NORMAL_HINTS(WM_SIZE_HINTS):
+    program specified minimum size: 0 by 0
+    window gravity: NorthWest
+WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, WM_TAKE_FOCUS, _NET_WM_PING, _NET_WM_SYNC_REQUEST
+WM_CLASS(STRING) = "sublime_text", "Sublime_text"
+WM_ICON_NAME(STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
+_NET_WM_ICON_NAME(UTF8_STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
+WM_NAME(STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
+_NET_WM_NAME(UTF8_STRING) = "~/google/linux/etale/miawm/miawm.h - Sublime Text (UNREGISTERED)"
+```
+
+## waterfox (leader)
+
+```c
+GDK_TIMESTAMP_PROP(GDK_TIMESTAMP_PROP) = 0x61
+WM_HINTS(WM_HINTS):
+    Client accepts input or input focus: True
+    Initial state is Normal State.
+    bitmap id # to use for icon: 0xa00007
+    bitmap id # of mask for icon: 0xa0000e
+    window id # of group leader: 0xa00001
+_GTK_THEME_VARIANT(UTF8_STRING) = 
+WM_WINDOW_ROLE(STRING) = "browser"
+_NET_WM_ICON(CARDINAL) =  Icon (128 x 128):
+_NET_WM_OPAQUE_REGION(CARDINAL) = 
+_NET_WM_WINDOW_TYPE(ATOM) = _NET_WM_WINDOW_TYPE_NORMAL
+_NET_WM_SYNC_REQUEST_COUNTER(CARDINAL) = 10485765, 10485766
+_NET_WM_USER_TIME_WINDOW(WINDOW): window id # 0xa00004
+WM_CLIENT_LEADER(WINDOW): window id # 0xa00001
+_NET_WM_PID(CARDINAL) = 36175
+WM_LOCALE_NAME(STRING) = "en_US.UTF-8"
+WM_CLIENT_MACHINE(STRING) = "dac"
+WM_NORMAL_HINTS(WM_SIZE_HINTS):
+    program specified minimum size: 450 by 95
+    program specified maximum size: 32766 by 32766
+    program specified base size: 450 by 95
+    window gravity: NorthWest
+WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, WM_TAKE_FOCUS, _NET_WM_PING, _NET_WM_SYNC_REQUEST
+WM_CLASS(STRING) = "Navigator", "Waterfox"
+WM_ICON_NAME(STRING) = "report.pdf - Waterfox"
+_NET_WM_ICON_NAME(UTF8_STRING) = "report.pdf - Waterfox"
+WM_NAME(STRING) = "report.pdf - Waterfox"
+_NET_WM_NAME(UTF8_STRING) = "report.pdf - Waterfox"
+```
+
+## root
+
+```c
+GDK_VISUALS(INTEGER) = 40, 295
+RESOURCE_MANAGER(STRING) = "urxvt.font:\t-schumacher-clean-medium-r-normal--6-60-75-75-c-50-iso646.1991-irv\nurxvt.boldFont:\t-schumacher-clean-medium-r-normal--6-60-75-75-c-50-iso646.1991"
+_XKB_RULES_NAMES(STRING) = "evdev", "pc105", "us", "", ""
+XFree86_has_VT(INTEGER) = 1
+XFree86_VT(INTEGER) = 2
+```
+
+## sublime (nonleader)
+
+```c
+WM_CLASS(STRING) = "sublime_text", "Sublime_text"
+WM_COMMAND(STRING) = { "sublime_text" }
+_NET_WM_USER_TIME_WINDOW(WINDOW): window id # 0x800002
+WM_CLIENT_LEADER(WINDOW): window id # 0x800001
+_NET_WM_PID(CARDINAL) = 36111
+WM_LOCALE_NAME(STRING) = "en_US.UTF-8"
+WM_CLIENT_MACHINE(STRING) = "dac"
+WM_NORMAL_HINTS(WM_SIZE_HINTS):
+    program specified size: 10 by 10
+WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, WM_TAKE_FOCUS, _NET_WM_PING
+WM_ICON_NAME(STRING) = "sublime_text"
+_NET_WM_ICON_NAME(UTF8_STRING) = "sublime_text"
+WM_NAME(STRING) = "Sublime Text"
+_NET_WM_NAME(UTF8_STRING) = "Sublime Text"
+```
+
+--------------------------------------------------------------------------------------------------------------------------------
 # Extended Window Manager Hints (ewmh), aka. Net WM
 
 I think EWMH supersedes ICCCM
@@ -1011,25 +1011,6 @@ I think EWMH supersedes ICCCM
   _NET_WM_FRAME_DRAWN
   _NET_WM_FRAME_TIMINGS
 ```
-
---------------------------------------------------------------------------------------------------------------------------------
-# EGLDevice
-
-https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Windows%20Systems/window_system_egl.html#
-
-This topic describes EGL mechanisms that you can use to implement a pure EGL display. Such a display does not use a window system.
-
-## EGLDevice
-EGLDevice provides a mechanism to access graphics functionality in the absence of or without reference to a native window system. It is a method to initialize EGL displays and surfaces directly on top of GPUs/devices rather than native window system objects. It is a cross-platform method to discover media devices like displays, GPUs, etc. The set of EGLDevice extensions boot strap EGL, without the use of any native APIs.
-
-## EGLOutput
-EGLOutput is to graphical outputs what EGLDevice is to devices. It allows enumeration of outputs on a device. EGLOutput allows rendering directly to a screen in the absence of a window system. Additionally, it allows apps to bypass native window systems for direct rendering. It defines certain EGL resources for referencing display control hardware associated with an EGL device. EGLOutput provides a binding between GL, NVIDIA® CUDA®, and multimedia rendering and the display output. In a typical Embedded setting, the outputs are often initialized to a fixed state at system startup. But in cases where they are configurable, other interfaces such as DRM must be used.
-
-## EGLStream
-EGLStream is a mechanism to share data efficiently between different APIs without copying data. APIs could be OpenGL, CUDA, Multimedia, etc. A producer and a consumer are attached to two ends of a stream object:
-  •Producer adds content into the stream.
-  •Consumer retrieves this content.
-EGLOutput instances can also be specified as consumers, allowing APIs to direct their output to the screen.
 
 --------------------------------------------------------------------------------------------------------------------------------
 # atoms
@@ -1628,6 +1609,25 @@ xprop -root  "Bold"                                        && \
 xprop -root  "DESTINATION"                                 && \
 xprop -root  "Wacom Serial IDs"
 ```
+
+--------------------------------------------------------------------------------------------------------------------------------
+# EGLDevice
+
+https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Windows%20Systems/window_system_egl.html#
+
+This topic describes EGL mechanisms that you can use to implement a pure EGL display. Such a display does not use a window system.
+
+## EGLDevice
+EGLDevice provides a mechanism to access graphics functionality in the absence of or without reference to a native window system. It is a method to initialize EGL displays and surfaces directly on top of GPUs/devices rather than native window system objects. It is a cross-platform method to discover media devices like displays, GPUs, etc. The set of EGLDevice extensions boot strap EGL, without the use of any native APIs.
+
+## EGLOutput
+EGLOutput is to graphical outputs what EGLDevice is to devices. It allows enumeration of outputs on a device. EGLOutput allows rendering directly to a screen in the absence of a window system. Additionally, it allows apps to bypass native window systems for direct rendering. It defines certain EGL resources for referencing display control hardware associated with an EGL device. EGLOutput provides a binding between GL, NVIDIA® CUDA®, and multimedia rendering and the display output. In a typical Embedded setting, the outputs are often initialized to a fixed state at system startup. But in cases where they are configurable, other interfaces such as DRM must be used.
+
+## EGLStream
+EGLStream is a mechanism to share data efficiently between different APIs without copying data. APIs could be OpenGL, CUDA, Multimedia, etc. A producer and a consumer are attached to two ends of a stream object:  
+  - Producer adds content into the stream.  
+  - Consumer retrieves this content.  
+EGLOutput instances can also be specified as consumers, allowing APIs to direct their output to the screen.  
 
 --------------------------------------------------------------------------------------------------------------------------------
 # sources
