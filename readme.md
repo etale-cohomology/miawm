@@ -40,10 +40,25 @@ libxcb-res
 
 # notes
 
+`xcb` has almost no formal documentation.  
+So, its best "documentation" is the source code itself.  
+However, most of the source code is machine-generated from a description of the `X Protocol`.  
+So, the source code is only useful as documentation if you understand what `xcb` is.  
+`xcb` is a thin wrapper around the `X Protocol`.  
+This means that, in order to understand `xcb`, you must understand the `X Protocol` (not deeply though, but only at a high level).  
+
+The `X Protocol` is just a specification for sending/receiving **packets** ("messages") between a "client" and a "server" (think `http`, but for graphics instructions). (Sadly, the `X Protocol` spec is terrible for understanding the `X Protocol` if you're an `X` newbie.)  
+The `X Protocol` is a **request-reply-error-event** protocol, meaning that every **packet** ("message") between the "client" and the "server" is a **request**, or a **reply**, or an **error**, or an **event**.
+If you understand the `X Protocol` well enough, you can open your own `socket()` into the `X server` and send **requests** and receive **replies**/**errors**/**events** on your own, **without** `xlib` or `xcb`. (This is easier than it sounds.)  
+
+Another good piece of `xcb` documentation is, paradoxically, `xlib` documentation.  
+Once you understand that `xlib` is a high-level wrapper (that destroys much of the `X Protocols` semantics by hiding low-level `X Protocol` details) and that `xcb` is a low-level wrapper, you can (with some effort) "translate" between `xlib` functions and `xcb` functions.  
+`xlib` documentation is good for `xcb` because a lot of the `xlib` documentation actually explains `X Protocol` details, and that's useful for both `xlib` and `xcb`.  
+
 In `xcb` there are 3 kinds of API entry points: `xcb_<op>()`, `xcb_<op>_checked()`, `xcb_<op>_unchecked()`.  
-`xcb_<op>()`           API calls return `xcb_void_cookie_t`.  
-`xcb_<op>_checked()`   API calls return `xcb_void_cookie_t`.  
-`xcb_<op>_unchecked()` API calls return `xcb_<op>_cookie_t`.  
+`xcb_<op>_checked()`   API calls return: `xcb_void_cookie_t`.  
+`xcb_<op>_unchecked()` API calls return: `xcb_<op>_cookie_t`.  
+`xcb_<op>()`           API calls return: `xcb_void_cookie_t` if `xcb_<op>_checked()` exists, and `xcb_<op>_cookie_t` if `xcb_<op>_unchecked()` exists.  
 Both `xcb_void_cookie_t` and `xcb_<op>_cookie_t` are a `struct{ unsigned int sequence; };`, so they can be processed by the same error-checking macro.  
 
 Example API entry points.  
@@ -59,7 +74,9 @@ xcb_get_window_attributes_cookie_t xcb_get_window_attributes_unchecked();
 For requests with no reply (eg. `xcb_map_window()`),  errors are delivered to the event loop (you receive an X11 event of type `0x00` when calling `xcb_poll_for_event()`). In order to explicitly check for errors in a **BLOCKING** fashion, call `xcb_<op>_checked()` (eg. `xcb_map_window_checked()`) and use `xcb_request_check()`.  
 For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when calling the reply function. To get errors in the event loop instead, call `xcb_<op>_unchecked()` (eg. `xcb_intern_atom_unchecked()`).  
 
-`@wm_focus_next()` focuses the window `W` (in the window stack) satisfying:
+# `wm_focus_next()`
+
+`wm_focus_next()` focuses the window `W` (in the window stack) satisfying:
 
     0) idx[W] is not @idx
     1) map_state[W] is @XCB_MAP_STATE_VIEWABLE
@@ -71,12 +88,12 @@ For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when ca
 
 # x11 modifiers
 
-X allows you to control which physical keys are considered modifier keys. Normal apps won't do this.
-Like keycode-to-keysym remapping, this can be done by an purpose app run from the user’s startup script (eg. `xmodma
-Modifier keys generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.
-The `state` member is a mask that indicates which logical modifiers were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.
-`state` is used by XLookupString() to generate the correct keysym from a key event.
-Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.
+X allows you to control which physical keys are considered modifier keys.  
+Like keycode-to-keysym remapping, this can be done by an app run from the user’s startup script (eg. `xmodmap`).  
+Modifier keys generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
+The `state` member is a mask that indicates which logical modifiers were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
+`state` is used by XLookupString() to generate the correct keysym from a key event.  
+Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.  
 
 # good bitmap fonts
 
@@ -86,6 +103,100 @@ Note that the `state` member of events other than key, button, motion, and borde
 /usr/share/fonts/X11/misc/fonts.dir:clR6x6.pcf.gz -schumacher-clean-medium-r-normal--6-60-75-75-c-60-iso646.1991-irv
 /usr/share/fonts/X11/misc/fonts.dir:micro.pcf.gz micro
 ```
+
+--------------------------------------------------------------------------------------------------------------------------------
+# xcb grabs
+
+ACTIVE  GRABS (invoked by calling XGrabPointer() or XGrabKeyboard()) causes pointer and keyboard events to be sent to the grabbing window.
+PASSIVE GRABS (invoked by calling XGrabKey()     or XGrabButton())   causes an ACTIVE GRAB to begin when a certain key or button combination is pressed.
+
+PASSIVE GRABS are useful in implementing menus.
+When you grab a device, you have the option of confining the pointer to any window within the grabbing client and of controlling the further processing of both keyboard and pointer events.  
+Grabbing the keyboard effectively selects all keyboard events, whether you selected them previously or not.  
+Grabbing the keyboard also causes FocusIn and FocusOut events to be sent to the old and new focus windows, but they must be selected by each window to be received.  
+In the call to grab the pointer, however, you specify what types of pointer, button, and enter/leave events you want.  
+Grabs take precedence over the keyboard focus window. Grabs of the keyboard generated FocusIn and FocusOut events, so that if your client selects these, it can determine whether or not it can get keyboard events.  
+Pointer grabbing is more problematic, since no event notifies other clients when one client has grabbed it. However, pointer grabs are almost always temporary.  
+
+`xcb_grab_key()`  
+  Passive grab on the keyboard. In the future, the keyboard is actively grabbed (as for GrabKeyboard), the last-keyboard-grab time is set to the time at which the key was pressed (as transmitted in the KeyPress event), and the KeyPress event is reported if all of the following conditions are true:
+  The keyboard is not grabbed and the specified key (which can itself be a modifier key) is logically pressed when the specified modifier keys are logically down, and no other modifier keys are logically down.
+  Either the grab_window is an ancestor of (or is) the focus window, or the grab_window is a descendant of the focus window and contains the pointer.
+  A passive grab on the same key combination does not exist on any ancestor of grab_window.
+  The interpretation of the remaining arguments is as for XGrabKeyboard. The active grab is terminated automatically when the logical state of the keyboard has the specified key released (independent of the logical state of the modifier keys), at which point a KeyRelease event is reported to the grabbing window.
+  Note that the logical state of a device (as seen by client apps) may lag the physical state if device event processing is frozen.
+  A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers). It is not required that all modifiers specified have currently assigned KeyCodes. A keycode argument of AnyKey is equivalent to issuing the request for all possible KeyCodes. Otherwise, the specified keycode must be in the range specified by min_keycode and max_keycode in the connection setup, or a BadValue error results.
+  If some other client has issued a XGrabKey with the same key combination on the same window, a BadAccess error results. When using AnyModifier or AnyKey, the request fails completely, and a BadAccess error results (no grabs are established) if there is a conflicting grab for any combination.
+
+  `XCB_MOD_MASK_ANY`:    Grab the pointer w/ all possible modifier combinations
+  `XCB_GRAB_ANY`:        Grab any key
+  `XCB_GRAB_MODE_SYNC`:  The state of the keyboard appears to freeze: No further keyboard events are generated by the server until the grabbing client issues a releasing AllowEvents request or until the keyboard grab is released.
+  `XCB_GRAB_MODE_ASYNC`: Keyboard event processing continues normally.
+
+  edef xcb_mod_mask_t {
+    XCB_MOD_MASK_SHIFT   = 1,
+    XCB_MOD_MASK_LOCK    = 2,
+    XCB_MOD_MASK_CONTROL = 4,
+    XCB_MOD_MASK_1       = 8,
+    XCB_MOD_MASK_2       = 16,
+    XCB_MOD_MASK_3       = 32,
+    XCB_MOD_MASK_4       = 64,
+    XCB_MOD_MASK_5       = 128,
+    XCB_MOD_MASK_ANY     = 32768,
+  }xcb_mod_mask_t;
+
+  edef xcb_key_but_mask_t {
+    XCB_KEY_BUT_MASK_SHIFT    = 1,
+    XCB_KEY_BUT_MASK_LOCK     = 2,
+    XCB_KEY_BUT_MASK_CONTROL  = 4,
+    XCB_KEY_BUT_MASK_MOD_1    = 8,
+    XCB_KEY_BUT_MASK_MOD_2    = 16,
+    XCB_KEY_BUT_MASK_MOD_3    = 32,
+    XCB_KEY_BUT_MASK_MOD_4    = 64,
+    XCB_KEY_BUT_MASK_MOD_5    = 128,
+    XCB_KEY_BUT_MASK_BUTTON_1 = 256,
+    XCB_KEY_BUT_MASK_BUTTON_2 = 512,
+    XCB_KEY_BUT_MASK_BUTTON_3 = 1024,
+    XCB_KEY_BUT_MASK_BUTTON_4 = 2048,
+    XCB_KEY_BUT_MASK_BUTTON_5 = 4096,
+  }xcb_key_but_mask_t;
+
+--------------------------------------------------------------------------------------------------------------------------------
+# the X11 modifier mapping
+
+X Version 11 supports eight modifier bits of which three are preassigned to Shift, Lock, and Control. Each modifier bit is controlled by the state of a set of keys, and these sets are specified in a table accessed by GetModifierMapping and SetModifierMapping requests. This table is a shared resource and requires conventions.
+
+A client that needs to use one of the preassigned modifiers should assume that the modifier table has been set up correctly to control these modifiers. The Lock modifier should be interpreted as Caps Lock or Shift Lock according as the keycodes in its controlling set include XK_Caps_Lock or XK_Shift_Lock.
+
+Convention
+
+    Clients should determine the meaning of a modifier bit from the KeySyms being used to control it. 
+
+A client that needs to use an extra modifier (for example, META) should do the following:
+
+    Scan the existing modifier mappings. If it finds a modifier that contains a keycode whose set of KeySyms includes XK_Meta_L or XK_Meta_R, it should use that modifier bit.
+    If there is no existing modifier controlled by XK_Meta_L or XK_Meta_R, it should select an unused modifier bit (one with an empty controlling set) and do the following:
+        If there is a keycode with XL_Meta_L in its set of KeySyms, add that keycode to the set for the chosen modifier.
+        If there is a keycode with XL_Meta_R in its set of KeySyms, add that keycode to the set for the chosen modifier.
+        If the controlling set is still empty, interact with the user to select one or more keys to be META. 
+    If there are no unused modifier bits, ask the user to take corrective action.
+
+Conventions
+
+Clients needing a modifier not currently in use should assign keycodes carrying suitable KeySyms to an unused modifier bit.
+Clients assigning their own modifier bits should ask the user politely to remove his or her hands from the key in question if their SetModifierMapping request returns a Busy status.
+
+There is no good solution to the problem of reclaiming assignments to the five nonpreassigned modifiers when they are no longer being used.
+
+Convention
+
+    The user must use xmodmap or some other utility to deassign obsolete modifier mappings by hand. 
+
+When a client succeeds in performing a SetModifierMapping request, all clients will receive MappingNotify (request==Modifier) events. There is no mechanism for preventing these events from being received. A client that uses one of the nonpreassigned modifiers that receives one of these events should do a GetModifierMapping request to discover the new mapping, and if the modifier it is using has been cleared, it should reinstall the modifier.
+
+Note that a GrabServer request must be used to make the GetModifierMapping and SetModifierMapping pair in these transactions atomic. 
+
+https://tronche.com/gui/x/icccm/sec-6.html#s-6
 
 --------------------------------------------------------------------------------------------------------------------------------
 # application atoms examples
@@ -183,43 +294,6 @@ _NET_WM_ICON_NAME(UTF8_STRING) = "sublime_text"
 WM_NAME(STRING) = "Sublime Text"
 _NET_WM_NAME(UTF8_STRING) = "Sublime Text"
 ```
-
---------------------------------------------------------------------------------------------------------------------------------
-# the X11 modifier mapping
-
-X Version 11 supports eight modifier bits of which three are preassigned to Shift, Lock, and Control. Each modifier bit is controlled by the state of a set of keys, and these sets are specified in a table accessed by GetModifierMapping and SetModifierMapping requests. This table is a shared resource and requires conventions.
-
-A client that needs to use one of the preassigned modifiers should assume that the modifier table has been set up correctly to control these modifiers. The Lock modifier should be interpreted as Caps Lock or Shift Lock according as the keycodes in its controlling set include XK_Caps_Lock or XK_Shift_Lock.
-
-Convention
-
-    Clients should determine the meaning of a modifier bit from the KeySyms being used to control it. 
-
-A client that needs to use an extra modifier (for example, META) should do the following:
-
-    Scan the existing modifier mappings. If it finds a modifier that contains a keycode whose set of KeySyms includes XK_Meta_L or XK_Meta_R, it should use that modifier bit.
-    If there is no existing modifier controlled by XK_Meta_L or XK_Meta_R, it should select an unused modifier bit (one with an empty controlling set) and do the following:
-        If there is a keycode with XL_Meta_L in its set of KeySyms, add that keycode to the set for the chosen modifier.
-        If there is a keycode with XL_Meta_R in its set of KeySyms, add that keycode to the set for the chosen modifier.
-        If the controlling set is still empty, interact with the user to select one or more keys to be META. 
-    If there are no unused modifier bits, ask the user to take corrective action.
-
-Conventions
-
-Clients needing a modifier not currently in use should assign keycodes carrying suitable KeySyms to an unused modifier bit.
-Clients assigning their own modifier bits should ask the user politely to remove his or her hands from the key in question if their SetModifierMapping request returns a Busy status.
-
-There is no good solution to the problem of reclaiming assignments to the five nonpreassigned modifiers when they are no longer being used.
-
-Convention
-
-    The user must use xmodmap or some other utility to deassign obsolete modifier mappings by hand. 
-
-When a client succeeds in performing a SetModifierMapping request, all clients will receive MappingNotify (request==Modifier) events. There is no mechanism for preventing these events from being received. A client that uses one of the nonpreassigned modifiers that receives one of these events should do a GetModifierMapping request to discover the new mapping, and if the modifier it is using has been cleared, it should reinstall the modifier.
-
-Note that a GrabServer request must be used to make the GetModifierMapping and SetModifierMapping pair in these transactions atomic. 
-
-https://tronche.com/gui/x/icccm/sec-6.html#s-6
 
 --------------------------------------------------------------------------------------------------------------------------------
 # xcb
@@ -742,62 +816,6 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   xcb_warp_pointer_checked
   xcb_window_next
 ```
-
-# xcb grabs
-
-ACTIVE  GRABS (invoked by calling XGrabPointer() or XGrabKeyboard()) causes pointer and keyboard events to be sent to the grabbing window.
-PASSIVE GRABS (invoked by calling XGrabKey()     or XGrabButton())   causes an ACTIVE GRAB to begin when a certain key or button combination is pressed.
-
-PASSIVE GRABS are useful in implementing menus.
-When you grab a device, you have the option of confining the pointer to any window within the grabbing client and of controlling the further processing of both keyboard and pointer events.  
-Grabbing the keyboard effectively selects all keyboard events, whether you selected them previously or not.  
-Grabbing the keyboard also causes FocusIn and FocusOut events to be sent to the old and new focus windows, but they must be selected by each window to be received.  
-In the call to grab the pointer, however, you specify what types of pointer, button, and enter/leave events you want.  
-Grabs take precedence over the keyboard focus window. Grabs of the keyboard generated FocusIn and FocusOut events, so that if your client selects these, it can determine whether or not it can get keyboard events.  
-Pointer grabbing is more problematic, since no event notifies other clients when one client has grabbed it. However, pointer grabs are almost always temporary.  
-
-`@xcb_grab_key()`  
-  Passive grab on the keyboard. In the future, the keyboard is actively grabbed (as for GrabKeyboard), the last-keyboard-grab time is set to the time at which the key was pressed (as transmitted in the KeyPress event), and the KeyPress event is reported if all of the following conditions are true:
-  The keyboard is not grabbed and the specified key (which can itself be a modifier key) is logically pressed when the specified modifier keys are logically down, and no other modifier keys are logically down.
-  Either the grab_window is an ancestor of (or is) the focus window, or the grab_window is a descendant of the focus window and contains the pointer.
-  A passive grab on the same key combination does not exist on any ancestor of grab_window.
-  The interpretation of the remaining arguments is as for XGrabKeyboard. The active grab is terminated automatically when the logical state of the keyboard has the specified key released (independent of the logical state of the modifier keys), at which point a KeyRelease event is reported to the grabbing window.
-  Note that the logical state of a device (as seen by client apps) may lag the physical state if device event processing is frozen.
-  A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers). It is not required that all modifiers specified have currently assigned KeyCodes. A keycode argument of AnyKey is equivalent to issuing the request for all possible KeyCodes. Otherwise, the specified keycode must be in the range specified by min_keycode and max_keycode in the connection setup, or a BadValue error results.
-  If some other client has issued a XGrabKey with the same key combination on the same window, a BadAccess error results. When using AnyModifier or AnyKey, the request fails completely, and a BadAccess error results (no grabs are established) if there is a conflicting grab for any combination.
-
-  `XCB_MOD_MASK_ANY`:    Grab the pointer w/ all possible modifier combinations
-  `XCB_GRAB_ANY`:        Grab any key
-  `XCB_GRAB_MODE_SYNC`:  The state of the keyboard appears to freeze: No further keyboard events are generated by the server until the grabbing client issues a releasing AllowEvents request or until the keyboard grab is released.
-  `XCB_GRAB_MODE_ASYNC`: Keyboard event processing continues normally.
-
-  edef xcb_mod_mask_t {
-    XCB_MOD_MASK_SHIFT   = 1,
-    XCB_MOD_MASK_LOCK    = 2,
-    XCB_MOD_MASK_CONTROL = 4,
-    XCB_MOD_MASK_1       = 8,
-    XCB_MOD_MASK_2       = 16,
-    XCB_MOD_MASK_3       = 32,
-    XCB_MOD_MASK_4       = 64,
-    XCB_MOD_MASK_5       = 128,
-    XCB_MOD_MASK_ANY     = 32768,
-  }xcb_mod_mask_t;
-
-  edef xcb_key_but_mask_t {
-    XCB_KEY_BUT_MASK_SHIFT    = 1,
-    XCB_KEY_BUT_MASK_LOCK     = 2,
-    XCB_KEY_BUT_MASK_CONTROL  = 4,
-    XCB_KEY_BUT_MASK_MOD_1    = 8,
-    XCB_KEY_BUT_MASK_MOD_2    = 16,
-    XCB_KEY_BUT_MASK_MOD_3    = 32,
-    XCB_KEY_BUT_MASK_MOD_4    = 64,
-    XCB_KEY_BUT_MASK_MOD_5    = 128,
-    XCB_KEY_BUT_MASK_BUTTON_1 = 256,
-    XCB_KEY_BUT_MASK_BUTTON_2 = 512,
-    XCB_KEY_BUT_MASK_BUTTON_3 = 1024,
-    XCB_KEY_BUT_MASK_BUTTON_4 = 2048,
-    XCB_KEY_BUT_MASK_BUTTON_5 = 4096,
-  }xcb_key_but_mask_t;
 
 --------------------------------------------------------------------------------------------------------------------------------
 # Extended Window Manager Hints (ewmh), aka. Net WM
