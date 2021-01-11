@@ -44,15 +44,15 @@ libxcb-res
 So, its best "documentation" is the source code itself.  
 However, most of the source code is machine-generated from a description of the `X Protocol`.  
 So, the source code is only useful as documentation if you understand what `xcb` is.  
-`xcb` is a thin wrapper around the `X Protocol`.  
-This means that, in order to understand `xcb`, you must understand the `X Protocol` (not deeply though, but only at a high level).  
+`xcb` is a **thin wrapper** around the `X Protocol`.  
+So, in order to understand `xcb`, you must understand the `X Protocol` (not deeply though, but only at a high level).  
 
-The `X Protocol` is just a specification for sending/receiving **packets** ("messages") between a "client" and a "server" (think `http`, but for graphics instructions). (Sadly, the `X Protocol` spec is terrible for understanding the `X Protocol` if you're an `X` newbie.)  
-The `X Protocol` is a **request-reply-error-event** protocol, meaning that every **packet** ("message") between the "client" and the "server" is a **request**, or a **reply**, or an **error**, or an **event**.
+The `X Protocol` is just a specification for sending/receiving **packets** ("messages") between a "client" and a "server" (think `http`, but for graphics instructions).  
+The `X Protocol` is a **request-reply-error-event** protocol, meaning that every **packet** ("message") between the "client" and the "server" is a **request**, or a **reply**, or an **error**, or an **event**.  
 If you understand the `X Protocol` well enough, you can open your own `socket()` into the `X server` and send **requests** and receive **replies**/**errors**/**events** on your own, **without** `xlib` or `xcb`. (This is easier than it sounds.)  
 
 Another good piece of `xcb` documentation is, paradoxically, `xlib` documentation.  
-Once you understand that `xlib` is a high-level wrapper (that destroys much of the `X Protocols` semantics by hiding low-level `X Protocol` details) and that `xcb` is a low-level wrapper, you can (with some effort) "translate" between `xlib` functions and `xcb` functions.  
+Once you understand that `xlib` is a **high-level wrapper** (that destroys much of the `X Protocols` semantics by hiding low-level `X Protocol` details) and that `xcb` is a **low-level wrapper**, you can (with some effort) "translate" between `xlib` functions and `xcb` functions.  
 `xlib` documentation is good for `xcb` because a lot of the `xlib` documentation actually explains `X Protocol` details, and that's useful for both `xlib` and `xcb`.  
 
 In `xcb` there are 3 kinds of API entry points: `xcb_<op>()`, `xcb_<op>_checked()`, `xcb_<op>_unchecked()`.  
@@ -71,8 +71,8 @@ xcb_get_window_attributes_cookie_t xcb_get_window_attributes();
 xcb_get_window_attributes_cookie_t xcb_get_window_attributes_unchecked();
 ```
 
-For requests with no reply (eg. `xcb_map_window()`),  errors are delivered to the event loop (you receive an X11 event of type `0x00` when calling `xcb_poll_for_event()`). In order to explicitly check for errors in a **BLOCKING** fashion, call `xcb_<op>_checked()` (eg. `xcb_map_window_checked()`) and use `xcb_request_check()`.  
-For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when calling the reply function. To get errors in the event loop instead, call `xcb_<op>_unchecked()` (eg. `xcb_intern_atom_unchecked()`).  
+For **requests** with no **reply** (eg. `xcb_map_window()`),  **errors** are delivered to the **event loop** (you receive an X11 **event** of type `0x00` when calling `xcb_poll_for_event()`). In order to explicitly check for errors in a **BLOCKING** fashion, call `xcb_<op>_checked()` (eg. `xcb_map_window_checked()`) and use `xcb_request_check()`.  
+For **requests** with a  **reply** (eg. `xcb_intern_atom()`), **errors** are checked when calling the **reply** function. To get **errors** in the **event loop** instead, call `xcb_<op>_unchecked()` (eg. `xcb_intern_atom_unchecked()`).  
 
 # `wm_focus_next()`
 
@@ -88,12 +88,14 @@ For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when ca
 
 # x11 modifiers
 
-X allows you to control which physical keys are considered modifier keys.  
+`X` allows you to control which physical keys are considered **modifier keys**.  
 Like keycode-to-keysym remapping, this can be done by an app run from the user’s startup script (eg. `xmodmap`).  
-Modifier keys generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
-The `state` member is a mask that indicates which logical modifiers were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
-`state` is used by XLookupString() to generate the correct keysym from a key event.  
+**Modifier keys** generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
+The `state` member is a mask that indicates which logical **modifiers** were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
+`state` is used by XLookupString() to generate the correct `keysym` from a key event.  
 Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.  
+
+- The Xlib Programming Manual
 
 # good bitmap fonts
 
