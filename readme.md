@@ -86,17 +86,6 @@ For **requests** with a  **reply** (eg. `xcb_intern_atom()`), **errors** are che
     4) IF  there doesn't exist  a viewable window K (in the window stack) satisfying idx[K] > @idx (ie. the upper-viewable chain at @idx is empty)  AND  there doesn't exist a viewable window K (in the window stack) satisfying idx[K] < @idx (ie. the lower-viewable chain at @idx is empty),  THEN
          W is the VOID window
 
-# x11 modifiers
-
-`X` allows you to control which physical keys are considered **modifier keys**.  
-Like keycode-to-keysym remapping, this can be done by an app run from the user’s startup script (eg. `xmodmap`).  
-**Modifier keys** generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
-The `state` member is a mask that indicates which logical **modifiers** were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
-`state` is used by XLookupString() to generate the correct `keysym` from a key event.  
-Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.  
-
-- The Xlib Programming Manual
-
 # good bitmap fonts
 
 ```
@@ -107,34 +96,57 @@ Note that the `state` member of events other than key, button, motion, and borde
 ```
 
 --------------------------------------------------------------------------------------------------------------------------------
-# xcb grabs
+# The Xlib Programming Manual
 
-ACTIVE  GRABS (invoked by calling XGrabPointer() or XGrabKeyboard()) causes pointer and keyboard events to be sent to the grabbing window.
-PASSIVE GRABS (invoked by calling XGrabKey()     or XGrabButton())   causes an ACTIVE GRAB to begin when a certain key or button combination is pressed.
+https://tronche.com/gui/x/xlib
 
-PASSIVE GRABS are useful in implementing menus.
+## modifiers
+
+`X` allows you to control which physical keys are considered **modifier keys**.  
+Like keycode-to-keysym remapping, this can be done by an app run from the user’s startup script (eg. `xmodmap`).  
+**Modifier keys** generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
+The `state` member is a mask that indicates which logical **modifiers** were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
+`state` is used by XLookupString() to generate the correct `keysym` from a key event.  
+Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.  
+
+-- The Xlib Programming Manual
+
+## grabs
+
+**ACTIVE  GRABS** (invoked by calling `XGrabPointer()` or `XGrabKeyboard()`) causes pointer and keyboard events to be sent to the grabbing window.  
+**PASSIVE GRABS** (invoked by calling `XGrabKey()`     or `XGrabButton()`)   causes an ACTIVE GRAB to begin when a certain key or button combination is pressed.  
+
+**PASSIVE GRABS** are useful in implementing menus.
 When you grab a device, you have the option of confining the pointer to any window within the grabbing client and of controlling the further processing of both keyboard and pointer events.  
 Grabbing the keyboard effectively selects all keyboard events, whether you selected them previously or not.  
-Grabbing the keyboard also causes FocusIn and FocusOut events to be sent to the old and new focus windows, but they must be selected by each window to be received.  
+Grabbing the keyboard also causes `FocusIn` and `FocusOut` events to be sent to the old and new focus windows, but they must be selected by each window to be received.  
 In the call to grab the pointer, however, you specify what types of pointer, button, and enter/leave events you want.  
-Grabs take precedence over the keyboard focus window. Grabs of the keyboard generated FocusIn and FocusOut events, so that if your client selects these, it can determine whether or not it can get keyboard events.  
+Grabs take precedence over the keyboard focus window. Grabs of the keyboard generated `FocusIn` and `FocusOut` events, so that if your client selects these, it can determine whether or not it can get keyboard events.  
 Pointer grabbing is more problematic, since no event notifies other clients when one client has grabbed it. However, pointer grabs are almost always temporary.  
 
+-- The Xlib Programming Manual
+
+## `xcb_grab_key()`
+
+https://www.x.org/releases/X11R7.7-RC1/doc/man/man3/xcb_grab_key.3.xhtml
+
 `xcb_grab_key()`  
-  Passive grab on the keyboard. In the future, the keyboard is actively grabbed (as for GrabKeyboard), the last-keyboard-grab time is set to the time at which the key was pressed (as transmitted in the KeyPress event), and the KeyPress event is reported if all of the following conditions are true:
-  The keyboard is not grabbed and the specified key (which can itself be a modifier key) is logically pressed when the specified modifier keys are logically down, and no other modifier keys are logically down.
-  Either the grab_window is an ancestor of (or is) the focus window, or the grab_window is a descendant of the focus window and contains the pointer.
-  A passive grab on the same key combination does not exist on any ancestor of grab_window.
-  The interpretation of the remaining arguments is as for XGrabKeyboard. The active grab is terminated automatically when the logical state of the keyboard has the specified key released (independent of the logical state of the modifier keys), at which point a KeyRelease event is reported to the grabbing window.
-  Note that the logical state of a device (as seen by client apps) may lag the physical state if device event processing is frozen.
-  A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers). It is not required that all modifiers specified have currently assigned KeyCodes. A keycode argument of AnyKey is equivalent to issuing the request for all possible KeyCodes. Otherwise, the specified keycode must be in the range specified by min_keycode and max_keycode in the connection setup, or a BadValue error results.
-  If some other client has issued a XGrabKey with the same key combination on the same window, a BadAccess error results. When using AnyModifier or AnyKey, the request fails completely, and a BadAccess error results (no grabs are established) if there is a conflicting grab for any combination.
 
-  `XCB_MOD_MASK_ANY`:    Grab the pointer w/ all possible modifier combinations
-  `XCB_GRAB_ANY`:        Grab any key
-  `XCB_GRAB_MODE_SYNC`:  The state of the keyboard appears to freeze: No further keyboard events are generated by the server until the grabbing client issues a releasing AllowEvents request or until the keyboard grab is released.
-  `XCB_GRAB_MODE_ASYNC`: Keyboard event processing continues normally.
+Passive grab on the keyboard. In the future, the keyboard is actively grabbed (as for `GrabKeyboard`), the last-keyboard-grab time is set to the time at which the key was pressed (as transmitted in the `KeyPress` event), and the `KeyPress` event is reported if all of the following conditions are true:  
+The keyboard is not grabbed and the specified key (which can itself be a modifier key) is logically pressed when the specified modifier keys are logically down, and no other modifier keys are logically down.  
+Either the `grab_window` is an ancestor of (or is) the focus window, or the grab_window is a descendant of the focus window and contains the pointer.  
+A passive grab on the same key combination does not exist on any ancestor of grab_window.  
+The interpretation of the remaining arguments is as for `XGrabKeyboard`. The active grab is terminated automatically when the logical state of the keyboard has the specified key released (independent of the logical state of the modifier keys), at which point a KeyRelease event is reported to the grabbing window.  
+Note that the logical state of a device (as seen by client apps) may lag the physical state if device event processing is frozen.  
+A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers). It is not required that all modifiers specified have currently assigned `KeyCodes`. A keycode argument of `AnyKey` is equivalent to issuing the request for all possible `KeyCodes`. Otherwise, the specified keycode must be in the range specified by `min_keycode` and `max_keycode` in the connection setup, or a `BadValue` error results.  
+If some other client has issued a XGrabKey with the same key combination on the same window, a `BadAccess` error results. When using `AnyModifier` or `AnyKey`, the request fails completely, and a `BadAccess` error results (no grabs are established) if there is a conflicting grab for any combination.  
 
+`XCB_MOD_MASK_ANY`:    Grab the pointer w/ all possible modifier combinations  
+`XCB_GRAB_ANY`:        Grab any key  
+`XCB_GRAB_MODE_SYNC`:  The state of the keyboard appears to freeze: No further keyboard events are generated by the server until the grabbing client issues a releasing AllowEvents request or until the keyboard grab is released  
+`XCB_GRAB_MODE_ASYNC`: Keyboard event processing continues normally  
+
+```
   edef xcb_mod_mask_t {
     XCB_MOD_MASK_SHIFT   = 1,
     XCB_MOD_MASK_LOCK    = 2,
@@ -162,6 +174,9 @@ Pointer grabbing is more problematic, since no event notifies other clients when
     XCB_KEY_BUT_MASK_BUTTON_4 = 2048,
     XCB_KEY_BUT_MASK_BUTTON_5 = 4096,
   }xcb_key_but_mask_t;
+```
+
+https://tronche.com/gui/x/xlib/input/XGrabPointer.html
 
 --------------------------------------------------------------------------------------------------------------------------------
 # the X11 modifier mapping
