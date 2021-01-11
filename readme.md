@@ -74,17 +74,21 @@ xcb_get_window_attributes_cookie_t xcb_get_window_attributes_unchecked();
 For **requests** with no **reply** (eg. `xcb_map_window()`),  **errors** are delivered to the **event loop** (you receive an X11 **event** of type `0x00` when calling `xcb_poll_for_event()`). In order to explicitly check for errors in a **BLOCKING** fashion, call `xcb_<op>_checked()` (eg. `xcb_map_window_checked()`) and use `xcb_request_check()`.  
 For **requests** with a  **reply** (eg. `xcb_intern_atom()`), **errors** are checked when calling the **reply** function. To get **errors** in the **event loop** instead, call `xcb_<op>_unchecked()` (eg. `xcb_intern_atom_unchecked()`).  
 
-# `wm_focus_next()`
+# `wm_focus_next(@idx)`
 
-`wm_focus_next()` focuses the window `W` (in the window stack) satisfying:
+Let `W` be a **window**.  
+Let `idx[W` be the **index** (aka. **position**) of window `W` in the **window stack**.  
+Let `map_state[W]` be the **map state** of window `W`.  
+
+`wm_focus_next(@idx)` focuses the window `W` (in the window stack) satisfying:
 
     0) idx[W] is not @idx
-    1) map_state[W] is @XCB_MAP_STATE_VIEWABLE
-    2) IF  there         exists a viewable window K (in the window stack) satisfying idx[K] > @idx (ie. the upper-viewable chain at @idx is nonempty), THEN  W satisfies: for all K satisfying idx[K] > @idx, idx[W] <= idx[K] (ie. W is the minimum of the upper-viewable chain at @idx)
-    3) IF  there doesn't exist  a viewable window K (in the window stack) satisfying idx[K] > @idx (ie. the upper-viewable chain at @idx is empty),    THEN
-         IF  there exists       a viewable window K (in the window stack) satisfying idx[K] < @idx [ie. the lower-viewable chain at @idx is nonempty), THEN  W satisfies: for all K satisfying idx[K] < @idx, idx[W] >= idx[K] (ie. W is the maximum of the lower-viewable chain at @idx)
-    4) IF  there doesn't exist  a viewable window K (in the window stack) satisfying idx[K] > @idx (ie. the upper-viewable chain at @idx is empty)  AND  there doesn't exist a viewable window K (in the window stack) satisfying idx[K] < @idx (ie. the lower-viewable chain at @idx is empty),  THEN
-         W is the VOID window
+    1) map_state[W] is XCB_MAP_STATE_VIEWABLE
+    2) IF  there         exists   a viewable window X (in the window stack) satisfying idx[X] > @idx (ie. the upper-viewable chain at @idx is nonempty), THEN  W satisfies: for all windows X satisfying idx[X] > @idx, we have that idx[W] <= idx[X] (ie. idx[W] is the minimum of the upper-viewable chain at @idx)
+    3) IF  there doesn't exist    a viewable window X (in the window stack) satisfying idx[X] > @idx (ie. the upper-viewable chain at @idx is empty),    THEN
+         IF  there exists         a viewable window X (in the window stack) satisfying idx[X] < @idx [ie. the lower-viewable chain at @idx is nonempty), THEN  W satisfies: for all windows X satisfying idx[X] < @idx, we have that idx[W] >= idx[X] (ie. idx[W] is the maximum of the lower-viewable chain at @idx)
+    4) IF  there doesn't exist    a viewable window X (in the window stack) satisfying idx[X] > @idx (ie. the upper-viewable chain at @idx is empty),    THEN
+         IF  there doesn't exists a viewable window X (in the window stack) satisfying idx[X] < @idx [ie. the lower-viewable chain at @idx is empty),    THEN  W is the VOID window (ie. idx[W] is 0x00000000)
 
 # good bitmap fonts
 
@@ -99,17 +103,6 @@ For **requests** with a  **reply** (eg. `xcb_intern_atom()`), **errors** are che
 # The Xlib Programming Manual
 
 https://tronche.com/gui/x/xlib
-
-## modifiers
-
-`X` allows you to control which physical keys are considered **modifier keys**.  
-Like keycode-to-keysym remapping, this can be done by an app run from the user’s startup script (eg. `xmodmap`).  
-**Modifier keys** generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
-The `state` member is a mask that indicates which logical **modifiers** were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
-`state` is used by XLookupString() to generate the correct `keysym` from a key event.  
-Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.  
-
--- The Xlib Programming Manual
 
 ## grabs
 
@@ -177,8 +170,20 @@ If some other client has issued a XGrabKey with the same key combination on the 
   }xcb_key_but_mask_t;
 ```
 
---------------------------------------------------------------------------------------------------------------------------------
-# the X11 modifier mapping
+## modifiers
+
+`X` allows you to control which physical keys are considered **modifier keys**.  
+Like keycode-to-keysym remapping, this can be done by an app run from the user’s startup script (eg. `xmodmap`).  
+**Modifier keys** generate `KeyPress` and `KeyRelease` events like other keys, but they are the only keys reported in the `state` member of every key, button, motion, or border-crossing event.  
+The `state` member is a mask that indicates which logical **modifiers** were pressed when the event occurred. Each bit in `state` is represented by a constant such as `ControlMask`.  
+`state` is used by XLookupString() to generate the correct `keysym` from a key event.  
+Note that the `state` member of events other than key, button, motion, and border-crossing events does not have the meaning described here.  
+
+-- The Xlib Programming Manual
+
+## the X11 modifier mapping
+
+https://tronche.com/gui/x/icccm/sec-6.html#s-6
 
 X Version 11 supports eight modifier bits of which three are preassigned to Shift, Lock, and Control. Each modifier bit is controlled by the state of a set of keys, and these sets are specified in a table accessed by GetModifierMapping and SetModifierMapping requests. This table is a shared resource and requires conventions.
 
@@ -211,8 +216,6 @@ Convention
 When a client succeeds in performing a SetModifierMapping request, all clients will receive MappingNotify (request==Modifier) events. There is no mechanism for preventing these events from being received. A client that uses one of the nonpreassigned modifiers that receives one of these events should do a GetModifierMapping request to discover the new mapping, and if the modifier it is using has been cleared, it should reinstall the modifier.
 
 Note that a GrabServer request must be used to make the GetModifierMapping and SetModifierMapping pair in these transactions atomic. 
-
-https://tronche.com/gui/x/icccm/sec-6.html#s-6
 
 --------------------------------------------------------------------------------------------------------------------------------
 # application atoms examples
