@@ -1,27 +1,24 @@
 --------------------------------------------------------------------------------------------------------------------------------
 # miawm
 
-![miawm img00](img00.png)
 ![miawm img01](img01.png)
-![miawm img02](img02.png)
-![miawm img03](img03.png)
 
 `miawm` (mathIsART window manager) is a **minimalistic**, **keyboard-only** window manager for the **X Window System** (aka. **X11**).  
 
 `miawm` subscribes to the Unix philosophy (do one thing, and do it well), and considers that a window manager must do **exactly 2 things**:  
 
-  0) manage windows (move, resize, hide)  
-  1) implement universal shortcuts (mostly for launching/closing applications, and changing the **window focus**)  
+  0. manage windows (move, resize, hide)  
+  1. implement universal shortcuts (mostly for launching/closing applications, and changing the **window focus**)  
 
 In particular, a window manager must **not**:  
 
-  0) reparent top-level windows (or any window)  
-  1) draw window frames  
-  2) draw window decorations/buttons/titlebars/menus  
-  3) draw application menus (an exception is the menu that has the list of all the windows)  
-  4) have anything to do whatsoever with drawing UI elements  
-  5) have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but a *chimeric abomination*)  
-  6) dishonor application position/size requests sent via `@xcb_create_window()`
+  0. reparent top-level windows (or any window)  
+  1. draw window frames  
+  2. draw window decorations/buttons/titlebars/menus  
+  3. draw application menus (an exception is the menu that has the list of all the windows)  
+  4. have anything to do whatsoever with drawing UI elements  
+  5. have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but a *chimeric abomination*)  
+  6. dishonor application position/size requests sent via `@xcb_create_window()`
 
 A good window manager is an invisible window manager.  
 A window manager must get out of the way as much as possible.  
@@ -59,6 +56,11 @@ For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when ca
          IF  there exists       a viewable window K (in the window stack) satisfying idx[K] < @idx [ie. the lower-viewable chain at @idx is nonempty), THEN  W satisfies: for all K satisfying idx[K] < @idx, idx[W] >= idx[K] (ie. W is the maximum of the lower-viewable chain at @idx)
     4) IF  there doesn't exist  a viewable window K (in the window stack) satisfying idx[K] > @idx (ie. the upper-viewable chain at @idx is empty)  AND  there doesn't exist a viewable window K (in the window stack) satisfying idx[K] < @idx (ie. the lower-viewable chain at @idx is empty),  THEN
          W is the VOID window
+
+![miawm img00](img00.png)
+![miawm img01](img01.png)
+![miawm img02](img02.png)
+![miawm img03](img03.png)
 
 # dependencies
 
