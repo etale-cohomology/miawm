@@ -128,7 +128,8 @@ Pointer grabbing is more problematic, since no event notifies other clients when
 
 ## `xcb_grab_key()`
 
-https://www.x.org/releases/X11R7.7-RC1/doc/man/man3/xcb_grab_key.3.xhtml
+https://tronche.com/gui/x/xlib/input/XGrabPointer.html  
+https://www.x.org/releases/X11R7.7-RC1/doc/man/man3/xcb_grab_key.3.xhtml  
 
 `xcb_grab_key()`  
 
@@ -175,8 +176,6 @@ If some other client has issued a XGrabKey with the same key combination on the 
     XCB_KEY_BUT_MASK_BUTTON_5 = 4096,
   }xcb_key_but_mask_t;
 ```
-
-https://tronche.com/gui/x/xlib/input/XGrabPointer.html
 
 --------------------------------------------------------------------------------------------------------------------------------
 # the X11 modifier mapping
@@ -339,7 +338,7 @@ xprop -id 0x00e00006  _NET_WM_PID
 # x11 save set
 
 Save sets are a useless feature for bloated window managers.  
-Window managers almost always place in the save-set all the windows they reparent or iconify, using XAddToSaveSet().  
+Window managers almost always place in the save-set all the windows they reparent or iconify, using `XAddToSaveSet()`.  
 Windows are automatically removed from the save-set when they are destroyed.  
 If your window manager doesn't not reparent/iconify (which should ALWAYS be the case), then it doesn't need a save set.  
 
@@ -382,7 +381,10 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   - functions ending w/ `*_sizeof` were discarded because they're useless
   - functions ending w/ `*_length` or `*_end` were discarded because they suck
 
-## XCB Core: `ctags -f- --c-kinds=+p xcb.h     | grep -e "p$" -e "f$" | cut -f1 | grep -v -e "_sizeof$" -e "_length$" -e "_end$"`
+## XCB Core
+
+`ctags -f- --c-kinds=+p xcb.h     | grep -e "p$" -e "f$" | cut -f1 | grep -v -e "_sizeof$" -e "_length$" -e "_end$"`
+
 ```
   xcb_connect
   xcb_connect_to_display_with_auth_info
@@ -408,7 +410,10 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   xcb_wait_for_special_event
 ```
 
-## XCB Protocol: `ctags -f- --c-kinds=+p xproto.h  | grep -e "p$" -e "f$" | cut -f1 | grep -v -e "_sizeof$" -e "_length$" -e "_end$"`
+## XCB Protocol
+
+`ctags -f- --c-kinds=+p xproto.h  | grep -e "p$" -e "f$" | cut -f1 | grep -v -e "_sizeof$" -e "_length$" -e "_end$"`
+
 ```
   xcb_alloc_color
   xcb_alloc_color_cells
@@ -839,7 +844,7 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
 
 I think EWMH supersedes ICCCM
 
-## default properties (atoms):
+## default properties:
 ```
   PRIMARY
   SECONDARY
@@ -911,7 +916,7 @@ I think EWMH supersedes ICCCM
   WM_TRANSIENT_FOR
 ```
 
-## EWMH properties (atoms:
+## EWMH properties:
 ```
   _NET_WM_FULL_PLACEMENT
   _NET_SUPPORTED
@@ -1007,6 +1012,8 @@ I think EWMH supersedes ICCCM
 --------------------------------------------------------------------------------------------------------------------------------
 # EGLDevice
 
+https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Windows%20Systems/window_system_egl.html#
+
 This topic describes EGL mechanisms that you can use to implement a pure EGL display. Such a display does not use a window system.
 
 ## EGLDevice
@@ -1020,8 +1027,6 @@ EGLStream is a mechanism to share data efficiently between different APIs withou
   •Producer adds content into the stream.
   •Consumer retrieves this content.
 EGLOutput instances can also be specified as consumers, allowing APIs to direct their output to the screen.
-
-https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Windows%20Systems/window_system_egl.html#
 
 --------------------------------------------------------------------------------------------------------------------------------
 # atoms
