@@ -7,18 +7,18 @@
 
 `miawm` subscribes to the Unix philosophy (do one thing, and do it well), and considers that a window manager must do **exactly 2 things**:  
 
-  0. manage windows (move, resize, hide)  
-  1. implement universal shortcuts (mostly for launching/closing applications, and changing the **window focus**)  
+0. manage windows (move, resize, hide)  
+1. implement universal shortcuts (mostly for launching/closing applications, and changing the **window focus**)  
 
 In particular, a window manager must **not**:  
 
-  0. reparent top-level windows (or any window)  
-  1. draw window frames  
-  2. draw window decorations/buttons/titlebars/menus  
-  3. draw application menus (an exception is the menu that has the list of all the windows)  
-  4. have anything to do whatsoever with drawing UI elements  
-  5. have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but a *chimeric abomination*)  
-  6. dishonor application position/size requests sent via `@xcb_create_window()`
+0. reparent top-level windows (or any window)  
+1. draw window frames  
+2. draw window decorations/buttons/titlebars/menus  
+3. draw application menus (an exception is the menu that has the list of all the windows)  
+4. have anything to do whatsoever with drawing UI elements  
+5. have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but a *chimeric abomination*)  
+6. dishonor application position/size requests sent via `@xcb_create_window()`
 
 A good window manager is an invisible window manager.  
 A window manager must get out of the way as much as possible.  
