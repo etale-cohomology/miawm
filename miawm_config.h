@@ -1,5 +1,6 @@
 // ----------------------------------------------------------------------------------------------------------------------------#
-/* keyboard layout (in x11 keycodes)! */
+// keyboard layout (in x11 keycodes): QGMLWB
+#if 1
 #define WM_KEY_00  0x18  // {h:l x:0 y:0}
 #define WM_KEY_10  0x2a  // {h:l x:1 y:0}
 #define WM_KEY_20  0x3a  // {h:l x:2 y:0}
@@ -30,6 +31,41 @@
 #define WM_KEY_72  0x3b  // {h:r x:7 y:2}
 #define WM_KEY_82  0x3c  // {h:r x:8 y:2}
 #define WM_KEY_92  0x3d  // {h:r x:9 y:2}
+#endif
+
+// keyboard layout (in x11 keycodes): QWERTY  // TODO!
+#if 0
+#define WM_KEY_00  0x??  // {h:l x:0 y:0}
+#define WM_KEY_10  0x??  // {h:l x:1 y:0}
+#define WM_KEY_20  0x??  // {h:l x:2 y:0}
+#define WM_KEY_30  0x??  // {h:l x:3 y:0}
+#define WM_KEY_40  0x??  // {h:l x:4 y:0}
+#define WM_KEY_01  0x??  // {h:l x:0 y:1}
+#define WM_KEY_11  0x??  // {h:l x:1 y:1}
+#define WM_KEY_21  0x??  // {h:l x:2 y:1}
+#define WM_KEY_31  0x??  // {h:l x:3 y:1}
+#define WM_KEY_41  0x??  // {h:l x:4 y:1}
+#define WM_KEY_02  0x??  // {h:l x:0 y:2}
+#define WM_KEY_12  0x??  // {h:l x:1 y:2}
+#define WM_KEY_22  0x??  // {h:l x:2 y:2}
+#define WM_KEY_32  0x??  // {h:l x:3 y:2}
+#define WM_KEY_42  0x??  // {h:l x:4 y:2}
+#define WM_KEY_50  0x??  // {h:r x:5 y:0}
+#define WM_KEY_60  0x??  // {h:r x:6 y:0}
+#define WM_KEY_70  0x??  // {h:r x:7 y:0}
+#define WM_KEY_80  0x??  // {h:r x:8 y:0}
+#define WM_KEY_90  0x??  // {h:r x:9 y:0}
+#define WM_KEY_51  0x??  // {h:r x:5 y:1}
+#define WM_KEY_61  0x??  // {h:r x:6 y:1}
+#define WM_KEY_71  0x??  // {h:r x:7 y:1}
+#define WM_KEY_81  0x??  // {h:r x:8 y:1}
+#define WM_KEY_91  0x??  // {h:r x:9 y:1}
+#define WM_KEY_52  0x??  // {h:r x:5 y:2}
+#define WM_KEY_62  0x??  // {h:r x:6 y:2}
+#define WM_KEY_72  0x??  // {h:r x:7 y:2}
+#define WM_KEY_82  0x??  // {h:r x:8 y:2}
+#define WM_KEY_92  0x??  // {h:r x:9 y:2}
+#endif
 
 // ----------------------------------------------------------------------------------------------------------------------------#
 /* keyboard shortcuts: a 2-array of function pointers!
