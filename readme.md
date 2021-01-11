@@ -24,6 +24,18 @@ A window manager must get out of the way as much as possible.
 The result of this is that window manager are naturally very simple applications, and require very little code.  
 The logic for a window manager is very linear and the responsibilities few, and so its code must be very linear (and small) as well.  
 
+![miawm img00](img00.png)
+![miawm img01](img01.png)
+![miawm img02](img02.png)
+![miawm img03](img03.png)
+
+# dependencies
+
+```
+libxcb
+libxcb-res
+```
+
 # notes
 
 In `xcb` there are 3 kinds of API entry points: `xcb_<op>()`, `xcb_<op>_checked()`, `xcb_<op>_unchecked()`.  
@@ -54,18 +66,6 @@ For requests with a  reply (eg. `xcb_intern_atom()`), errors are checked when ca
          IF  there exists       a viewable window K (in the window stack) satisfying idx[K] < @idx [ie. the lower-viewable chain at @idx is nonempty), THEN  W satisfies: for all K satisfying idx[K] < @idx, idx[W] >= idx[K] (ie. W is the maximum of the lower-viewable chain at @idx)
     4) IF  there doesn't exist  a viewable window K (in the window stack) satisfying idx[K] > @idx (ie. the upper-viewable chain at @idx is empty)  AND  there doesn't exist a viewable window K (in the window stack) satisfying idx[K] < @idx (ie. the lower-viewable chain at @idx is empty),  THEN
          W is the VOID window
-
-![miawm img00](img00.png)
-![miawm img01](img01.png)
-![miawm img02](img02.png)
-![miawm img03](img03.png)
-
-# dependencies
-
-```
-libxcb
-libxcb-res
-```
 
 # x11 modifiers
 
