@@ -293,7 +293,6 @@ fdef void cmd_exec(wm_t* wm, char** args){  int pid=exec(args);  }  // printf(" 
 fdef void cmd_exit(wm_t* wm){  wm->running = 0;  }
 
 fdef void cmd_win_close(wm_t* wm, xcb_window_t window){  // https://nachtimwald.com/2009/11/08/sending-wm_delete_window-client-messages/
-  // 0) do cmd
   xcb_client_message_event_t ev;  memset(&ev, 0x00, sizeof(xcb_client_message_event_t));
   ev.response_type  = XCB_CLIENT_MESSAGE;
   ev.format         = 32;  // wm_protocols_format
@@ -301,22 +300,19 @@ fdef void cmd_win_close(wm_t* wm, xcb_window_t window){  // https://nachtimwald.
   ev.type           = xcb_property_name_to_atom(wm->connection, "WM_PROTOCOLS");      // wm_protocols_atom
   ev.data.data32[0] = xcb_property_name_to_atom(wm->connection, "WM_DELETE_WINDOW");  // wm_delete_window_atom
   ev.data.data32[1] = XCB_CURRENT_TIME;
-  xcb_send_event(wm->connection, 0, window, XCB_EVENT_MASK_NO_EVENT, (const char*)&ev);  // wm_menu_show(wm);  // BUG! Calling @wm_menu_show() here causes: spamming new windows (with key repeat) and closing them (with key repeat) causes a segfault in @wm_menu_show()
+  xcb_send_event(wm->connection, 0, window, XCB_EVENT_MASK_NO_EVENT, (const char*)&ev);  // 0) do cmd  // wm_menu_show(wm);  // BUG! Calling @wm_menu_show() here causes: spamming new windows (with key repeat) and closing them (with key repeat) causes a segfault in @wm_menu_show()
 }
 
 fdef void cmd_win_kill(wm_t* wm, xcb_window_t window, int sig){  if(window==0x00000000) return;  if(sig!=2 && sig!=9) return;  // NOTE! Don't @xcb_kill_client() because it doesn't kill the process, just its xcb_connection_t to X11! Then it becomes worse than a zombie!
-  // 0) do cmd
   xcb_res_query_client_ids_reply_t*  client_ids_reply = xcb_res_query_client_ids_reply(wm->connection, xcb_res_query_client_ids_unchecked(wm->connection, 1,(xcb_res_client_id_spec_t[]){{client:window, mask:XCB_RES_CLIENT_ID_MASK_LOCAL_CLIENT_PID}}), NULL);  // https://stackoverflow.com/questions/37283179
   xcb_res_client_id_value_t*         client_ids_data  = xcb_res_query_client_ids_ids_iterator(client_ids_reply).data;
   u32 pid = *xcb_res_client_id_value_value(client_ids_data);  if(!(client_ids_data->spec.mask&XCB_RES_CLIENT_ID_MASK_LOCAL_CLIENT_PID)) return;
   free(client_ids_reply);
-  m_chks(kill(pid, sig));  // wm_menu_show(wm);  // BUG! Calling @wm_menu_show() here causes: spamming new windows (with key repeat) and closing them (with key repeat) causes a segfault in @wm_menu_show()
+  m_chks(kill(pid, sig));  // 0) do cmd  // wm_menu_show(wm);  // BUG! Calling @wm_menu_show() here causes: spamming new windows (with key repeat) and closing them (with key repeat) causes a segfault in @wm_menu_show()
 }
 
 fdef void cmd_focus_hide(wm_t* wm){  if(wm->focus==0x00000000) return;
-  // 0) do cmd
-  xcb_unmap_window(wm->connection, wm->focus);
-
+  xcb_unmap_window(wm->connection, wm->focus);                                         // 0) do cmd
   xcb_window_t window     = wm->focus;                                                 // 1) prep
   int          window_idx = vec_idx(wm->windows, window);  if(window_idx==-1) return;  // 1) prep
   wm_focus_next(wm, window_idx);                                                       // 2) focus the window that is max[min[UV[i]], max[LV[i]]]  (where: UV[i] is the upper-viewable chain at @i; LV[i] is the lower-viewable chain it @i; min[UV[i]] is the window in UV[i] whose index is minimum among all windows in UV[i]; max[LV[i]] is the window in LV[i] whose index is maximum among all windows in LV[i]

@@ -1,6 +1,5 @@
 // ----------------------------------------------------------------------------------------------------------------------------#
-// keyboard layout (in x11 keycodes): QGMLWB
-#if 1
+#if 1  // keyboard layout (in x11 keycodes): QGMLWB
 #define WM_KEY_00  0x18  // {h:l x:0 y:0}
 #define WM_KEY_10  0x2a  // {h:l x:1 y:0}
 #define WM_KEY_20  0x3a  // {h:l x:2 y:0}
@@ -33,8 +32,7 @@
 #define WM_KEY_92  0x3d  // {h:r x:9 y:2}
 #endif
 
-// keyboard layout (in x11 keycodes): QWERTY  // TODO!
-#if 0
+#if 0  // keyboard layout (in x11 keycodes): QWERTY  // TODO!
 #define WM_KEY_00  0x??  // {h:l x:0 y:0}
 #define WM_KEY_10  0x??  // {h:l x:1 y:0}
 #define WM_KEY_20  0x??  // {h:l x:2 y:0}
@@ -69,7 +67,7 @@
 
 // ----------------------------------------------------------------------------------------------------------------------------#
 /* keyboard shortcuts: a 2-array of function pointers!
-  x: x11 modifier MASK (NOT modifier keycode)! run `xmodmap -pm`  // NOTE! Modifier masks must be valid X11/XCB modifier masks (as seen by `xmodmap -pm`), because @xcb_grab_key() only accepts valid X11/XCB modifier masks... You can assign map keycodes to modifiers in `~/.Xmodmap` or w/ @XSetModifierMapping(). X11 is hardcoded to only support 8 modifiers (yuck!)
+  x: x11 modifier MASK (NOT modifier keycode)! run `xmodmap -pm`  // NOTE! Modifier masks must be valid X11/XCB modifier masks, because @xcb_grab_key() only accepts valid X11/XCB modifier masks... You can assign map keycodes to modifiers in `~/.Xmodmap` or w/ @XSetModifierMapping(). X11 is hardcoded to only support 8 modifiers (yuck!)
   y: x11 keycode!                              run `xmodmap -pke`
 */
 void (*WM_SHORTCUTS[WM_SHORTCUTS_NDIM_X][WM_SHORTCUTS_NDIM_Y])(wm_t*) = {  // keyboard shortcuts!

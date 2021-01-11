@@ -2,7 +2,7 @@
 CC     = gcc-8
 MWATCH = makefile
 CFLAGS = -std=gnu11  -Wno-unused-result -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function -Wno-parentheses  # NOTE! `-no-pie -fno-PIE -fno-pic -fno-PIC` breaks compilation of static & shared libraries!
-CNOPIE = -no-pie -fno-PIE -fno-pic -fno-PIC
+CNOPIE = -no-pie -fno-PIE -fno-pic -fno-PIC  
 CFAST  = -Ofast -march=native  -flto -fwhole-program  -fno-stack-protector -fstrict-aliasing -fomit-frame-pointer  -funroll-loops -finline-functions  -DNDEBUG -pipe  # NOTE! `-no-pie -fno-PIE -fno-pic -fno-PIC` breaks compilation of static & shared libraries!
 BIN    = $(HOME)/bin
 

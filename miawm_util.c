@@ -1,3 +1,4 @@
+/* @blk0  libutil: stuff that should be in the C standard library to begin with! */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
