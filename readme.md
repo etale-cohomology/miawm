@@ -1,19 +1,27 @@
 --------------------------------------------------------------------------------------------------------------------------------
 # miawm
 
-`miawm` (mathIsART window manager) is a *minimalistic* window manager for the **X Window System** (aka. **X11**).  
+![miawm img00](img00.png)
+![miawm img01](img01.png)
+![miawm img02](img02.png)
+![miawm img03](img03.png)
+
+`miawm` (mathIsART window manager) is a **minimalistic**, **keyboard-only** window manager for the **X Window System** (aka. **X11**).  
 
 `miawm` subscribes to the Unix philosophy (do one thing, and do it well), and considers that a window manager must do **exactly 2 things**:  
-  0) manage windows (move, resize, hide)  
-  1) implement universal shortcuts (mostly for launching/closing applications, and changing the window focus)  
 
-In particular, a window manager must **not** do the following things:  
-  0) draw window frames  
-  1) draw window decorations/buttons/titlebars/menus  
-  2) draw application menus (an exception is universal system menu when you right-click the root window)  
-  3) have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but an abomination)  
+  0) manage windows (move, resize, hide)  
+  1) implement universal shortcuts (mostly for launching/closing applications, and changing the **window focus**)  
+
+In particular, a window manager must **not**:  
+
+  0) reparent top-level windows (or any window)  
+  1) draw window frames  
+  2) draw window decorations/buttons/titlebars/menus  
+  3) draw application menus (an exception is the menu that has the list of all the windows)  
   4) have anything to do whatsoever with drawing UI elements  
-  5) reparent top-level windows (aka. substructure redirect)  
+  5) have anything to do whatsoever with **compositing** (ie. the so-called "compositing" window managers are an oxymoron; a "compositing window manager" is not a window manager, but a *chimeric abomination*)  
+  6) dishonor application position/size requests sent via `@xcb_create_window()`
 
 A good window manager is an invisible window manager.  
 A window manager must get out of the way as much as possible.  
@@ -243,6 +251,7 @@ Windows are automatically removed from the save-set when they are destroyed.
 If your window manager doesn't not reparent/iconify (which should ALWAYS be the case), then it doesn't need a save set.  
 
 ## xcb api
+```
   xcb.h
   xproto.h
   bigreq.h
@@ -271,6 +280,7 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   xtest.h
   xv.h
   xvmc.h
+```
 
 ## summary
   - the XCB Core API     (libxcb 1.14) has  22 functions
@@ -280,6 +290,7 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   - functions ending w/ `*_length` or `*_end` were discarded because they suck
 
 ## XCB Core: `ctags -f- --c-kinds=+p xcb.h     | grep -e "p$" -e "f$" | cut -f1 | grep -v -e "_sizeof$" -e "_length$" -e "_end$"`
+```
   xcb_connect
   xcb_connect_to_display_with_auth_info
   xcb_connect_to_fd
@@ -302,8 +313,10 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   xcb_unregister_for_special_event
   xcb_wait_for_event
   xcb_wait_for_special_event
+```
 
 ## XCB Protocol: `ctags -f- --c-kinds=+p xproto.h  | grep -e "p$" -e "f$" | cut -f1 | grep -v -e "_sizeof$" -e "_length$" -e "_end$"`
+```
   xcb_alloc_color
   xcb_alloc_color_cells
   xcb_alloc_color_cells_masks
@@ -726,6 +739,7 @@ If your window manager doesn't not reparent/iconify (which should ALWAYS be the 
   xcb_warp_pointer
   xcb_warp_pointer_checked
   xcb_window_next
+```
 
 # xcb grabs
 
@@ -788,7 +802,8 @@ Pointer grabbing is more problematic, since no event notifies other clients when
 
 I think EWMH supersedes ICCCM
 
-## supported default properties (atoms):
+## default properties (atoms):
+```
   PRIMARY
   SECONDARY
   ARC
@@ -857,8 +872,10 @@ I think EWMH supersedes ICCCM
   CAP_HEIGHT
   WM_CLASS
   WM_TRANSIENT_FOR
+```
 
-## supported EWMH properties (atoms:
+## EWMH properties (atoms:
+```
   _NET_WM_FULL_PLACEMENT
   _NET_SUPPORTED
   _NET_CLIENT_LIST
@@ -948,6 +965,7 @@ I think EWMH supersedes ICCCM
   _NET_WM_OPAQUE_REGION
   _NET_WM_FRAME_DRAWN
   _NET_WM_FRAME_TIMINGS
+```
 
 --------------------------------------------------------------------------------------------------------------------------------
 # EGLDevice
@@ -1569,5 +1587,5 @@ xprop -root  "Wacom Serial IDs"
 --------------------------------------------------------------------------------------------------------------------------------
 # sources
 
-https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i
-https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-iii
+https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-i  
+https://jichu4n.com/posts/how-x-window-managers-work-and-how-to-write-one-part-iii  
