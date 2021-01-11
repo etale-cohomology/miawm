@@ -23,8 +23,8 @@ In particular, a window manager must **not**:
 A good window manager is an invisible window manager.  
 A window manager must get out of the way as much as possible.  
 
-The result of this is that window manager are naturally very simple applications, and require very little code.  
-The logic for a window manager is very linear and the responsibilities few, and so its code must be very linear (and small) as well.  
+It follows that window managers are naturally very simple applications, and require very little code.  
+The logic for a window manager is very shallow and the responsibilities few, and so its code must be very shallow (and small) as well.  
 
 ![miawm img00](img00.png)
 ![miawm img01](img01.png)
@@ -80,7 +80,7 @@ Let `W` be a **window**.
 Let `idx[W` be the **index** (aka. **position**) of window `W` in the **window stack**.  
 Let `map_state[W]` be the **map state** of window `W`.  
 
-`wm_focus_next(@idx)` focuses the window `W` (in the window stack) satisfying:
+`wm_focus_next(@idx)` focuses the **window** `W` (in the **window stack**) satisfying:
 
     0) idx[W] is not @idx
     1) map_state[W] is XCB_MAP_STATE_VIEWABLE
