@@ -84,7 +84,7 @@ In Linux, @fork() is implemented using copy-on-write pages, so the only @fork() 
 @vfork() is 10x faster than @fork()! No parent-child communication! @vfork() is a special case of @clone(), used to create new processes w/o copying the page tables of the parent process, for high-performance apps where a child is created which then immediately issues an execve()! fork()/vfork() return twice! Once for the child (zero pid) and once for the parent (positive pid).
 To run SYNC (and not ASYNC), call wait()/waitpid() on the PARENT (which has nonzero pid as returned by fork()/vfork()!
 */
-#include <unistd.h>  // @vfork(), @fork()
+#include <unistd.h>  // @vfork(), @fork(), @dup2()
 #include <fcntl.h>   // @open()
 #include <sys/wait.h>
 

@@ -3,7 +3,7 @@
 
 ![miawm img01](img01.png)
 
-`miawm` (mathIsART window manager) is a **minimalistic**, **keyboard-only**, **tiling**, [**XCB**](https://xcb.freedesktop.org/) window manager for the **X Window System** (aka. **X11**).  
+`miawm` (mathIsART window manager) is a **minimalistic**, **keyboard-only**, **tiling** window manager for the **X Window System** (aka. **X11**) in `C` + [`xcb`](https://xcb.freedesktop.org/).  
 
 `miawm` subscribes to the Unix philosophy (*do one thing, and do it well*), and considers that a window manager must do **exactly 2 things**:  
 

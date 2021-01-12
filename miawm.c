@@ -475,6 +475,11 @@ fdef void ev_loop(wm_t* wm){
 #include "miawm_config.h"
 
 fdefe int main(){
+#if NDEBUG
+  int fd = open("/dev/null", O_WRONLY);  m_chks(fd);
+  m_chks(dup2(fd, STDOUT_FILENO));
+  m_chks(close(fd));
+#endif
   wm_t wm = wm_ini(WM_SHORTCUTS_NDIM_X,WM_SHORTCUTS_NDIM_Y,WM_SHORTCUTS, WM_FONT_NAME,WM_FONT_NDIM_X,WM_FONT_NDIM_Y, WM_MENU_NDIM_X);
   ev_loop(&wm);
   wm_end(&wm);
